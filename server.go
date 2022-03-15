@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kuritaeiji/gin-practice/controller"
+	"github.com/kuritaeiji/gin-practice/middleware"
 	"github.com/kuritaeiji/gin-practice/service"
+	"github.com/kuritaeiji/gin-practice/utils"
 )
 
 var (
@@ -12,7 +14,9 @@ var (
 )
 
 func main() {
+	utils.SettingLogFile()
 	server := gin.Default()
+	server.Use(middleware.BasicAuth())
 
 	server.GET("/videos", func(ctx *gin.Context) {
 		videoController.Index(ctx)
