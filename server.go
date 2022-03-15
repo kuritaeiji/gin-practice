@@ -11,6 +11,7 @@ import (
 var (
 	videoService    service.VideoService       = service.New()
 	videoController controller.VideoController = controller.New(videoService)
+	loginController controller.AuthController  = controller.NewAuthController()
 )
 
 func main() {
@@ -19,14 +20,23 @@ func main() {
 	utils.SettingLogFile()
 	utils.RegisterValidators()
 
-	server.Use(middleware.Logger())
+	notAuth := server.Group("")
+	{
+		notAuth.POST("/login", loginController.Login)
+	}
 
-	server.GET("/videos", func(ctx *gin.Context) {
-		videoController.Index(ctx)
-	})
-	server.POST("/videos", func(ctx *gin.Context) {
-		videoController.Create(ctx)
-	})
+	server.Use(middleware.Logger(), middleware.AuthorizeJWT())
+
+	auth := server.Group("")
+	{
+		auth.GET("/videos", func(ctx *gin.Context) {
+			videoController.Index(ctx)
+		})
+		auth.POST("/videos", func(ctx *gin.Context) {
+			videoController.Create(ctx)
+		})
+	}
+	auth.Use(middleware.AuthorizeJWT())
 
 	server.Run(":8080")
 }
