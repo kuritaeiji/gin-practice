@@ -14,9 +14,11 @@ var (
 )
 
 func main() {
-	gin.Default()
-	utils.SettingLogFile()
 	server := gin.Default()
+
+	utils.SettingLogFile()
+	utils.RegisterValidators()
+
 	server.Use(middleware.Logger())
 
 	server.GET("/videos", func(ctx *gin.Context) {

@@ -28,7 +28,11 @@ func (c *controller) Index(ctx *gin.Context) {
 
 func (c *controller) Create(ctx *gin.Context) {
 	var video model.Video
-	ctx.BindJSON(&video)
+	err := ctx.ShouldBindJSON(&video)
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	c.service.Save(video)
 	ctx.JSON(200, video)
 }
