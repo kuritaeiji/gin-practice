@@ -14,9 +14,10 @@ var (
 )
 
 func main() {
+	gin.Default()
 	utils.SettingLogFile()
 	server := gin.Default()
-	server.Use(middleware.BasicAuth())
+	server.Use(middleware.Logger())
 
 	server.GET("/videos", func(ctx *gin.Context) {
 		videoController.Index(ctx)
